@@ -1,0 +1,126 @@
+https://duthanhduoc.com/blog/cac-kien-thuc-can-chuan-bi-de-hoc-react
+
+Bài học rút ra ở bài 16 (NodeJs là gì, cài đặt và quản lý Nodejs thông qua NVM)
+
+* Cài nvm và sử dụng các phiên bản nodejs bằng cách chạy cmd bằng  admin : nvm install 18.15.0 và nvm use 18.15.0
+
+* Để tạo 1 file package.json thì 
+   B1: Ta vào terminal của project đó gõ npm init
+   B2: gõ package name và author nếu muốn
+
+* Khi ta tải 1 package như lodash thì nó sẽ hiện lên trên dependencies (npm i lodash) và lúc này node_modules sẽ xuất hiện
+
+* Muốn xoá một package thì ta phải vào terminal và gõ :
+    npm uninstall (prettier) 
+nó sẽ xoá cả trong package.json và node_modules luôn
+
+* Nếu đã có file package.json (thư viên) thì chỉ việc chạy yarn hoặc npm i sẽ xuất hiện node_modules và yarn.lock
+
+* nếu muốn cài một thư viện phục vụ trong quá trình code như prettier trong devDependencies thì ta gõ lệnh :
+  yarn add prettier -D (nó sẽ hiện trong file package.json)
+
+* Trong bài thì ta thấy cứ mỗi lần muốn chạy file index.js thì ta phải chạy câu lệnh node index.js mỗi lần ta không muốn làm theo cách này nữa
+  b1: Ta phải cài nodemon bằng câu lệnh : npm i nodemon --save-dev 
+  B2: Vào package.json   
+  "scripts": {
+    "nodemon": "nodemon index.js"
+  },
+  B3: Vào termminal và chạy : npm run nodemon
+  B4: Khi ta đối đối số và bấm Crcl + S thì kết quá sẽ tự động chạy lại
+
+dependencies : là tên và phiên bản của những package (thư viện) ta cài vào bằng câu lệnh như (npm i lodash) dùng trong project khi nó chạy
+devDependencies : là tên và phiên bản của những package ta cài vào bằng câu lệnh như (npm i prettier --save-dev) dùng trong khi code
+
+Bài học rút ra ở Bài 17: [updated] Webpack và Webpack CLI
+Webpack mới cập nhật một số thay đổi khác video mình quay!
+Tại phút 3:30 của video, các bạn đổi câu lệnh lại thành là: 
+"build": "webpack --mode=development --entry=./src/index.js"
+Sửa lại như vậy vì ban đầu chúng ta chưa có file config webpack nên nó không hiểu mode và entry là gì, chúng ta cần truyền vào.
+Khi mà các bạn đã tạo được file webpack.config.js rồi thì sửa câu lệnh trên thành 
+"build": "webpack"
+
+* Đầu tiên ta phải cài webpack và webpack-cli gõ lệnh :
+npm install –save-dev webpack
+npm install –save-dev webpack-cli
+
+* Sau khi cài xong thì vào package.json sửa lại :
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode=development --entry=./src/script.js"
+  },
+
+* Tạo 2 thư mục là dist và src cùng cấp với node modules
+  + Trong thư mục dist vào 1 file index.html
+  + Trong thư mục src tạo nhiều file js trong đó có file đầu vào script.js quy định như trên
+  + Những file .js khác file script.js phải có export default [tên hàm] trong file đó
+  + Trong file script.js ta phải kết nối những file kia bằng cách import [tên hàm] from './src/[tên file]' 
+  + Ở trong file script.js phải có câu lệnh  như console.log để hiện ra kết quả ở những file khác
+  + Sau khi làm xong ta chạy : npm run build và kết quả ta sẽ có 1 file là main.js được sinh ra trong thư mục dist
+  + Gắn đường dẫn file đó vào file index.html và mở Live Server để xem kết quả đạt được
+=> Ở console sẽ hiện ra kết quả là do file script.js là đầu vào  và nó là file kết nối với mọi file khác
+
+* Ta không muốn nó tự tạo file main.js như trên
+  B1. Tự tạo file webpack.config.js => Nó sẽ tự hiểu lấy config trong file này luôn 
+  B2. Sửa lại theo hướng dẫn
+   
+const path = require('path')
+
+module.exports = {
+    mode: 'development',
+    entry: {
+        app: path.resolve('src/script.js') // sửa ở đây đổi app -> tên file bạn muốn
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist')
+    },
+} 
+
+  B3. Tiếp theo ở file package.json sau khi sửa lại như ở trên thì ta sửa :
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+
+  
+  B4. Chạy npm run build để xem kết quả
+
+=> File app.js sẽ được tự động sinh ra thay cho hàm main.js như ở trên nếu không muốn file được sinh ra là file app.js ta sửa ở chỗ được đánh dấu
+
+  B5. Sửa lại đường dẫn ở index.html
+
+Tổng hợp lại :
+  B1 : Tạo 2 thư mục dist chứa index.html và src chứa các file js có 1 file là một file tổng
+  B2 : Tạo 1 file webpack.config.js và sửa lại như trên
+  B3 : Vào file package.json sửa ở script : "build": "webpack"
+  B4 : Sửa tên file đc sinh ra (nếu muốn)
+  B5 : Chạy npm run build
+
+Bài học rút ra ở Bài 18(Xử lý Loader và CSS trong Webpack):
+  * Cài css-loader và style-loader : npm install css-loader style-loader sass-loader sass --save-dev
+  * Ta thấy ở file app.js được sinh ra có quá nhiều chữ 
+     B1 : ta phải sửa lại ở file webpack.config.js bằng cách sửa lại 
+          mode: 'development' 
+     B2 : Xoá file app.js ban đầu
+     B3 : Sửa lại file webpack.config.js
+module.exports = {
+    mode: 'production',
+    entry: {
+        app: path.resolve('src/script.js')//file đầu vào
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist')//file đầu ra
+    },
+    module: {
+        rules: [
+            {
+                test: /\.s[ac]ss|css$/, // các file có đuôi css và scss
+                use: ['style-loader', 'css-loader', 'sass-loader']
+            }
+        ]
+    }
+}
+    B4 : Tạo thư mục chứa các file css và scss
+
+
+
