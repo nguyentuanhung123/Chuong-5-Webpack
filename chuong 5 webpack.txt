@@ -130,7 +130,7 @@ Bây giờ có 1 vấn đề là chúng ta đang chỉnh sửa các đường d�
 html-webpack-plugin sẽ giúp chúng ta tự tạo ra 1 file html bằng webpack theo cấu hình của chúng ta.
 Chạy câu lệnh yarn add html-webpack-plugin -D để cài
 
-* Câu lệnh npm run build lúc trước chỉ giúp tạo thư mục dist và file app.js bên trong nó chứ ko tạo ra file index.html
+* Câu lệnh npm run build lúc trước chỉ giúp tạo thư mục dist và file app.js bên trong nó chứ ko tự tạo ra file index.html
 * Cài câu lệnh : npm i --save-dev html-webpack-plugin
 * Xoá thư mục dist
 * Sửa lại cấu hình trong file webpack.config.js (đọc doc đẻ biết chi tiết)
@@ -143,7 +143,7 @@ plugins: [
         })
     ]
 
--> Project sẽ tự động sinh ra file dist chứa app.js và index.html có title là 'Webpack App' (lúc đầu chưa có dữ liệu nên nó có màu trắng những do quá nhanh nên ta không thể nhìn thấy)
+-> Project sẽ tự động sinh ra file dist chứa app.js và index.html có title là 'Webpack App' (lúc đầu chưa có dữ liệu nên khi chạy Live Server có màu trắng nhưng do quá nhanh nên ta không thể nhìn thấy)
 
 * Ta muốn file index.html render dựa trên 1 file được đặt sẵn 
   B1 : Tạo 1 file mẫu là template.html trong thư mục src
@@ -161,5 +161,75 @@ plugins: [
   
   B4 : Chạy npm run build thì file index.html sẽ được chỉnh sửa  giống hệt file template.html
  
+
+Bài học rút ra ở Bài 20(Mini CSS extract plugin)
+* Do ta gắn đường dẫn file css và scss vào file tổng script.js nên app.js đuọc sinh ra có quá nhiều chữ
+     B1 Cài Mini CSS extract plugin bằng câu lệnh : npm install --save-dev mini-css-extract-plugin
+     B2 Xoá style-loader vì không dùng được chung với cái mini này : npm uninstall style-loader
+     B3 Sửa lại plugins :
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module: {
+    rules: [
+      {
+        test: /\.s[ac]ss|css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+      }
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Webpack App',
+      filename: 'index.html',
+      template: 'src/template.html'
+    })
+  ]
+
+    B4 : Xoá thư mục dist
+    B5 : Chạy npm run build thì file app.css tổng hợp từ các file css và scss sẽ được sinh ra
+
+Bài học rút ra ở Bài 21 (Giải quyết caching với Hash name file)
+* Ta muốn cứ mỗi lần sửa lại file css thì sẽ hiện ra 1 file [name].[codehash] để thể hiện sự thay đổi và chức năng của nó mà bình thường nó chỉ hiện 1 lần sửa ở file app.css
+  B1 : Sửa lại file webpack.config.js
+output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js' // name = app , contenthash = mã bất kì
+  },
+
+new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css'
+    }),
+  B2 : Sửa lại 1 file css bất kì thì ta sẽ thấy 1 file css và 1 file app.js mới đi kìm với mã hash được sinh ra trong dist
+
+Bài học rút ra ở Bài 22 (Tạo một server bằng webpack để dev)
+* Ta không muốn chạy bằng Go Love mà chạy bằng câu lệnh như ở ReactJS
+  B1: Cài : npm install webpack-dev-server --save-dev
+  B2: Sửa ở file package.json :
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack serve"
+  },
+ 
+  B3: Bổ sung ở file webpack.config.js dưới plugin:
+"devDependencies": {
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.4",
+    "mini-css-extract-plugin": "^2.7.6",
+    "prettier": "^3.1.1",
+    "sass": "^1.69.5",
+    "sass-loader": "^13.3.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+
+  B4 : Chạy npm run start để khởi động 
+
+* Bonus : Khi ta thay đổi một file css hay js thì chỉ cần chạy npm run build thì màn hình sẽ tự động được cập nhật , không thể chạy npm run start nữa vì port 3000 hiện đang đc chạy (file css , js với các mã hash vẫn đc sinh ra như thường)
+
+
+
 
 

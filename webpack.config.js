@@ -9,25 +9,38 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     mode: 'production',
     entry: {
-        app: path.resolve('src/script.js')
+        app: path.resolve('src/script.js') //file đầu vào
     },
     output: {
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].[contenthash].js' // name = app , contenthash = mã bất kì , file đầu ra
     },
     module: {
         rules: [
             {
                 test: /\.s[ac]ss|css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] // file app.css được sinh ra lúc ban đầu
             }
         ]
     },
     plugins: [
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: '[name].[contenthash].css' // file app.123....css và app.123....js được sinh ra để thể hiện 1 chức năng mới
+        }),
         new HtmlWebpackPlugin({
-            title: 'Webpack App',
-            filename: 'index.html',
-            template: 'src/template.html'
+            title: 'Webpack App', // tên tiêu đề phải đc đặt trong template
+            filename: 'index.html', //tên file được sinh ra
+            template: 'src/template.html' //file mẫu được gắn vào khi index.html được sinh ra
         })
-    ]
+    ],
+    devServer: {
+        static: {
+            directory: 'dist' // Đường dẫn tương đối đến với thư mục chứa index.html
+        },
+        port: 3000, // Port thay cho port mặc định
+        open: true, // Mở trang webpack khi chạy terminal
+        hot: true, // Bật tính năng reload nhanh Hot Module Replacement
+        compress: true, // Bật Gzip cho các tài nguyên
+        historyApiFallback: true // Set true nếu bạn dùng cho các SPA và sử dụng History API của HTML5
+    }
 }
