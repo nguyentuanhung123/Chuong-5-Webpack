@@ -55,7 +55,7 @@ npm install –save-dev webpack-cli
   + Những file .js khác file script.js phải có export default [tên hàm] trong file đó
   + Trong file script.js ta phải kết nối những file kia bằng cách import [tên hàm] from './src/[tên file]' 
   + Ở trong file script.js phải có câu lệnh  như console.log để hiện ra kết quả ở những file khác
-  + Sau khi làm xong ta chạy : npm run build và kết quả ta sẽ có 1 file là main.js được sinh ra trong thư mục dist
+  + Sau khi làm xong ta chạy : npm run build và kết quả ta sẽ có 1 file là main.js được sinh ra trong thư mục dist (Không cần tự tạo ra thư mục dist vì sau khi chạy lệnh này  thì nó sẽ tự tạo ra thư mục dist và file main.js sẽ ở trong đó , ta chỉ cần tạo thêm file index.html theem đường dẫn file main.js trong đó để hiển thị kết quả trong Live Server consosole)
   + Gắn đường dẫn file đó vào file index.html và mở Live Server để xem kết quả đạt được
 => Ở console sẽ hiện ra kết quả là do file script.js là đầu vào  và nó là file kết nối với mọi file khác
 
@@ -121,6 +121,45 @@ module.exports = {
     }
 }
     B4 : Tạo thư mục chứa các file css và scss
+    B5 : Đặt đường dẫn những file đó trong file tổng script.js
+    B6 : Chạy npm run build để chạy và đồng thời tạo mới file app.js
 
+
+Bài học rút ra ở Bài 19(HTML webpack plugin)
+Bây giờ có 1 vấn đề là chúng ta đang chỉnh sửa các đường dẫn css và js bằng tay trong file index.html. Điều này không hay chút nào vì sau này các tên file sẽ là các hash name thì việc cập nhật lại file index.html khá mất thời gian.
+html-webpack-plugin sẽ giúp chúng ta tự tạo ra 1 file html bằng webpack theo cấu hình của chúng ta.
+Chạy câu lệnh yarn add html-webpack-plugin -D để cài
+
+* Câu lệnh npm run build lúc trước chỉ giúp tạo thư mục dist và file app.js bên trong nó chứ ko tạo ra file index.html
+* Cài câu lệnh : npm i --save-dev html-webpack-plugin
+* Xoá thư mục dist
+* Sửa lại cấu hình trong file webpack.config.js (đọc doc đẻ biết chi tiết)
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+plugins: [
+        new HtmlWebpackPlugin({
+            title: 'Webpack App',
+            filename: 'index.html'
+        })
+    ]
+
+-> Project sẽ tự động sinh ra file dist chứa app.js và index.html có title là 'Webpack App' (lúc đầu chưa có dữ liệu nên nó có màu trắng những do quá nhanh nên ta không thể nhìn thấy)
+
+* Ta muốn file index.html render dựa trên 1 file được đặt sẵn 
+  B1 : Tạo 1 file mẫu là template.html trong thư mục src
+  b2 : Sửa lại plugins 
+plugins: [
+        new HtmlWebpackPlugin({
+            title: 'Webpack App',
+            filename: 'index.html',
+            template: 'src/template.html'
+        })
+    ]
+  B3 : Sửa lại title của template.html : <title> Học
+        <%= htmlWebpackPlugin.options.title %>
+    </title>
+  
+  B4 : Chạy npm run build thì file index.html sẽ được chỉnh sửa  giống hệt file template.html
+ 
 
 
