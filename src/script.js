@@ -7,5 +7,5 @@ p().then((res) => {
     console.log(res);
 })
 
-console.log('Total : ', sum(2, 7));
+console.log('Total : ', sum(12, 8));
 

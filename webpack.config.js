@@ -13,7 +13,8 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[contenthash].js' // name = app , contenthash = mã bất kì , file đầu ra
+        filename: '[name].[contenthash].js', // name = app , contenthash = mã bất kì , file đầu ra
+        clean: true
     },
     module: {
         rules: [
