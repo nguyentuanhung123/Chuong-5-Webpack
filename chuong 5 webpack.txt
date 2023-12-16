@@ -230,6 +230,35 @@ Bài học rút ra ở Bài 22 (Tạo một server bằng webpack để dev)
 * Bonus : Khi ta thay đổi một file css hay js thì chỉ cần chạy npm run build thì màn hình sẽ tự động được cập nhật , không thể chạy npm run start nữa vì port 3000 hiện đang đc chạy (file css , js với các mã hash vẫn đc sinh ra như thường)
 
 
+Bài học rút ra ở Bài 23 (Dọn dẹp thư mục build tự động)
+* Nhiều file .js và .css với mã hash đc sinh ra khi được chỉnh sửa => Ta không muốn điều này xảy ra nữa , ta phải xoá thằng cũ trước khi thằng mới xuất hiện
+* Giải pháp : Sửa lại output:
+output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].[contenthash].js', // name = app , contenthash = mã bất kì , file đầu ra
+        clean: true
+    },
 
+=> Chạy npm run build để xem kết quả , ta sẽ thấy những file cũ sẽ đc xoá đi
 
-
+Bài học rút ra ở Bài 24 (Sourcemap cho webpack)
+* Từ những bài trước ta có thể thấy các cái console.log không còn đc thể hiện ở file tổng như script.js nữa mà là ở app.js nên ở màn hình hiện lên chỉ hiện app.js và app.css điều này gây cản trở trong quá trình debug và chỉnh sửa 1 file css nào đó 
+* Do lúc đầu ta để mode là production nên khi ta muốn debug 1 file .css hoặc .js nào đó sẽ không thể làm được vì nó chỉ hiện lên file tổng là app.js và app.css (nói cách khách là không có source map)
+* development environment : là nơi ta viết mã
+* production environment : là nơi hiện sản phẩm
+Giải pháp :
+  B1 : Sửa lại file package.json
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack serve --env development"
+  },
+B2 : Sửa lại webpack.config.js thành 1 arrow function có đối số là env để return về 1 object là các thành phần mà ta đã làm trước đó
+module.exports = (env) => {
+    return {...
+}}
+B3 : Sửa lại webpack.config.js
+     Cùng cấp với return : const isDevelopment = Boolean(env.development); //true
+     Trong return : + mode: isDevelopment ? 'development' : 'production',
+                    + devtool: isDevelopment ? 'source-map' : false,
+B4 : Mở Bash mới và chọn lại npm run start thì ở màn hình máy tính hiện ra sẽ có source map (Xem ở console.log nếu nó hiện ra cụ thể các file .js mà không phải file tổng app.js thì đó chính là source map)
