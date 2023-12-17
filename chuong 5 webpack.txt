@@ -262,3 +262,65 @@ B3 : Sửa lại webpack.config.js
      Trong return : + mode: isDevelopment ? 'development' : 'production',
                     + devtool: isDevelopment ? 'source-map' : false,
 B4 : Mở Bash mới và chọn lại npm run start thì ở màn hình máy tính hiện ra sẽ có source map (Xem ở console.log nếu nó hiện ra cụ thể các file .js mà không phải file tổng app.js thì đó chính là source map)
+
+Bonus : Chỉ development mới có source-map , nếu production có sẽ làm tăng kích thước trang Web và làm lộ mã nguồn của bạn
+
+Bài học rút ra ở Bài 25 (Dùng Babel để biên dịch code Javascript thành các version cũ) (Đọc doc)
+* Vấn đề : Nếu dùng các trình duyệt cũ thì những cái như Arrow Function là cái mới sẽ bị báo lỗi 
+  B1 : Cài : npm install --save-dev @babel/core @babel/preset-env babel-loader
+  B2 : Sửa webpack.package.js trong rules
+rules: [
+                {
+                    test: /\.s[ac]ss|css$/,
+                    use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] // file app.css được sinh ra lúc ban đầu
+                },
+                {
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['@babel/preset-env']
+                        }
+                    }
+                }
+            ]  
+   B3 : Chạy npm run build
+   B4 : Bấm chuột phải vào index.html và chọn Open in other browsers (Cái này mình chưa làm đc vì mình chưa biết câc settings)
+   B5 : Sửa lại cái presets ở trên thành : 
+ presets: [['@babel/preset-env', { targets: 'ie 11' }]] 
+   B6 : Chạy npm run build (Không hiệu quả)
+   B7 : Tạo file cùng cấp với webpack.package.js tên là : .browserslistrc
+   B8 : xoá cái { targets: 'ie 11' } ở trên còn lại là :
+presets: [['@babel/preset-env']]
+   B9 : Gõ ie 11 ở trong file .browserslistrc (không có dấu '')
+   B10 : Chạy npm run build
+   B11 : Kiểm tra file app.js đc sỉnh nếu nó ra function mà không phải Arrow Function là thành công
+
+* Một số thằng ta phải tự tay setting mới được
+
+VD : Ở ES6
+   Ở file đầu vào tổng script.js
+// ES6 Spread Operator
+const person = { name: 'Hung' }
+const personClone = { ...person }
+console.log('personClone', personClone)
+   => Nó vẫn sẽ chạy tốt ở trình duyệt cũ (đã thay đổi thành version cũ theo yêu cầu)
+
+* Những ở ES7 thì tự tay setting một số cái
+  Khi ta viết code của ES7 vào file đầu vào tổng script.js
+console.log('Object.values', Object.values(personClone)) //Hung
+=> Nó sẽ làm tăng kích thước file đầu ra trong khi những cái trước ta đã làm thành công thì nó giảm xuống
+  B1 : Cài : npm i core-js --save-dev
+  B2 : Sửa lại presets :
+presets: [
+            [
+              '@babel/preset-env',
+              {
+                debug: true, // Hiển thị debug lên terminal để dễ debug
+                useBuiltIns: 'usage', // Dùng cái này thì đơn giản nhất, không cần import core-js vào code
+                corejs: '3.34.0' // nên quy định verson core-js để babel-preset-env nó hoạt động tối ưu (Kiểm tra trong devDependencies)
+              }
+            ]
+          ]
+  B3 : Chạy npm run build

@@ -450,7 +450,7 @@ module: {
               {
                 debug: true, // Hiển thị debug lên terminal để dễ debug
                 useBuiltIns: 'usage', // Dùng cái này thì đơn giản nhất, không cần import core-js vào code
-                corejs: '3.23.4' // nên quy định verson core-js để babel-preset-env nó hoạt động tối ưu
+                corejs: '3.34.0' // nên quy định verson core-js để babel-preset-env nó hoạt động tối ưu (Kiểm tra trong devDependencies)
               }
             ]
           ]

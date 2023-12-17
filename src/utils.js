@@ -1,8 +1,8 @@
-import { reject } from "lodash";
-
-const p = () => new Promise((resolve, reject) => {
-    console.log('Hello World');
-    resolve('1000');
+const handle = () => new Promise((resolve) => {
+    setTimeout(() => {
+        console.log('Hellow World');
+        resolve(120);
+    }, 1000)
 })
 
-export default p;
+export default handle;

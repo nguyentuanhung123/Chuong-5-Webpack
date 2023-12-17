@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // console.log(`path.resolve(__dirname, 'dist') : `, path.resolve(__dirname, 'dist')); --> path.resolve(__dirname, 'dist') :  E:\document\webpack\dist
 
 module.exports = (env) => {
-    const isDevelopment = Boolean(env.development);
+    const isDevelopment = Boolean(env.development);//true
     return {
         mode: isDevelopment ? 'development' : 'production',
         entry: {
@@ -18,12 +18,26 @@ module.exports = (env) => {
             filename: '[name].[contenthash].js', // name = app , contenthash = mã bất kì , file đầu ra
             clean: true // xoá những file cũ không cần thiết 
         },
-        devtool: isDevelopment ? 'source-map' : false,
+        devtool: isDevelopment ? 'source-map' : false, // chỉ development mới có source-map , nếu production có sẽ làm tăng kích thước trang Web và làm lộ mã nguồn của bạn
         module: {
             rules: [
                 {
                     test: /\.s[ac]ss|css$/,
                     use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] // file app.css được sinh ra lúc ban đầu
+                },
+                {
+                    test: /\.js$/, // lùi verson ở tất cả những file js
+                    exclude: /node_modules/, // không áp dụng với các package trong node_modules
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                [
+                                    '@babel/preset-env'
+                                ]
+                            ]
+                        }
+                    }
                 }
             ]
         },
