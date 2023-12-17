@@ -1,5 +1,5 @@
 import handle from './utils.js';
-import sum from './index.js';
+import sum from './total.js';
 import './css/style.css';
 import './scss/style.scss'
 
