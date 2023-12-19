@@ -1,5 +1,6 @@
 import handle from './utils.js';
 import sum from './total.js';
+import domHandler from './dom.js';
 import './css/style.css';
 import './scss/style.scss'
 
@@ -7,7 +8,8 @@ import './scss/style.scss'
 //     console.log(res);
 // })
 
-console.log('Total : ', sum(12, 8));
+sum();
+domHandler();
 
 // ES6 Spread Operator
 const person = { name: 'Hung' }

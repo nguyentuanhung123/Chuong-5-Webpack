@@ -16,7 +16,8 @@ module.exports = (env) => {
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: '[name].[contenthash].js', // name = app , contenthash = mã bất kì , file đầu ra
-            clean: true // xoá những file cũ không cần thiết 
+            clean: true, // xoá những file cũ không cần thiết 
+            assetModuleFilename: '[file]'
         },
         devtool: isDevelopment ? 'source-map' : false, // chỉ development mới có source-map , nếu production có sẽ làm tăng kích thước trang Web và làm lộ mã nguồn của bạn
         module: {
@@ -43,6 +44,11 @@ module.exports = (env) => {
                             ]
                         }
                     }
+                },
+                //bổ sung
+                {
+                    test: /\.(png|svg|jpg|jpeg|gif|pdf)$/i, // chấp nhận những file  nào và 'i' có nghĩ là nếu nó in hoa cũng chấp nhận
+                    type: 'asset/resource'
                 }
             ]
         },

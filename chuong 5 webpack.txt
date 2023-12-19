@@ -54,7 +54,7 @@ npm install –save-dev webpack-cli
   + Trong thư mục src tạo nhiều file js trong đó có file đầu vào script.js quy định như trên
   + Những file .js khác file script.js phải có export default [tên hàm] trong file đó
   + Trong file script.js ta phải kết nối những file kia bằng cách import [tên hàm] from './src/[tên file]' 
-  + Ở trong file script.js phải có câu lệnh  như console.log để hiện ra kết quả ở những file khác
+  + Ở trong file script.js phải có câu lệnh như console.log hoặc [tên_hàm]() (ex : total()) để hiện ra kết quả ở những file khác
   + Sau khi làm xong ta chạy : npm run build và kết quả ta sẽ có 1 file là main.js được sinh ra trong thư mục dist (Không cần tự tạo ra thư mục dist vì sau khi chạy lệnh này  thì nó sẽ tự tạo ra thư mục dist và file main.js sẽ ở trong đó , ta chỉ cần tạo thêm file index.html theem đường dẫn file main.js trong đó để hiển thị kết quả trong Live Server consosole)
   + Gắn đường dẫn file đó vào file index.html và mở Live Server để xem kết quả đạt được
 => Ở console sẽ hiện ra kết quả là do file script.js là đầu vào  và nó là file kết nối với mọi file khác
@@ -203,7 +203,7 @@ new MiniCssExtractPlugin({
   B2 : Sửa lại 1 file css bất kì thì ta sẽ thấy 1 file css và 1 file app.js mới đi kìm với mã hash được sinh ra trong dist
 
 Bài học rút ra ở Bài 22 (Tạo một server bằng webpack để dev)
-* Ta không muốn chạy bằng Go Love mà chạy bằng câu lệnh như ở ReactJS
+* Ta không muốn chạy bằng Go Live mà chạy bằng câu lệnh như ở ReactJS
   B1: Cài : npm install webpack-dev-server --save-dev
   B2: Sửa ở file package.json :
 "scripts": {
@@ -324,3 +324,36 @@ presets: [
             ]
           ]
   B3 : Chạy npm run build
+
+Bài học rút ra ở Bài 26 (Sử dụng các assets trong webpack)
+B1 : Sửa lại file style.css theo doc , npm run start theo kết quả vừa sửa
+B2 : Tạo 1 file dom.js có arraw function tên là domHandler và viết nó theo file doc
+b3 : Vào file script.js sửa lại :
+     + import domHandler from './dom.js;
+     + domHandler()
+   => Bị lỗi  vì không đọc được file
+B4 : Sửa lại file webpack.config.js: (bổ sung trong rules)
+module: {
+    rules: [
+      //bổ sung
+      {
+        test: /\.(png|svg|jpg|jpeg|gif|pdf)$/i, // chấp nhận những file  nào và 'i' có nghĩ là nếu nó in hoa cũng chấp nhận
+        type: 'asset/resource'
+      }
+    ]
+}
+B5 : Xoá cái Git Bash cũ đi để chạy lại npm run start
+
+Vấn đề mới các cái đường dẫn ảnh hay powerpoint đều có mã hash và ta không muốn điều đó (Nhìn vào console hoặc Network sẽ thấy)
+Giải pháp:
+  B1 : Sửa lại file webpack.config.js: (bổ sung trong output)
+output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js',
+    clean: true,
+    assetModuleFilename: '[file]'
+  },
+  B2 : Xoá cái Git Bash cũ đi để chạy lại npm run start
+  => Ở console : + http://localhost:3000/src/images/pexels-maxime-francis.jpg
+                 + http://localhost:3000/src/pdfs/bitcoin.pdf
+     
