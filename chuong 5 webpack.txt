@@ -244,8 +244,8 @@ output: {
 Bài học rút ra ở Bài 24 (Sourcemap cho webpack)
 * Từ những bài trước ta có thể thấy các cái console.log không còn đc thể hiện ở file tổng như script.js nữa mà là ở app.js nên ở màn hình hiện lên chỉ hiện app.js và app.css điều này gây cản trở trong quá trình debug và chỉnh sửa 1 file css nào đó 
 * Do lúc đầu ta để mode là production nên khi ta muốn debug 1 file .css hoặc .js nào đó sẽ không thể làm được vì nó chỉ hiện lên file tổng là app.js và app.css (nói cách khách là không có source map)
-* development environment : là nơi ta viết mã
-* production environment : là nơi hiện sản phẩm
+* development environment : sử dụng khi npm run start
+* production environment : sử dụng khi npm run build
 Giải pháp :
   B1 : Sửa lại file package.json
   "scripts": {
@@ -263,7 +263,7 @@ B3 : Sửa lại webpack.config.js
                     + devtool: isDevelopment ? 'source-map' : false,
 B4 : Mở Bash mới và chọn lại npm run start thì ở màn hình máy tính hiện ra sẽ có source map (Xem ở console.log nếu nó hiện ra cụ thể các file .js mà không phải file tổng app.js thì đó chính là source map)
 
-Bonus : Chỉ development mới có source-map , nếu production có sẽ làm tăng kích thước trang Web và làm lộ mã nguồn của bạn
+*Bonus : Chỉ development mới có source-map , nếu production có sẽ làm tăng kích thước trang Web và làm lộ mã nguồn của bạn
 
 Bài học rút ra ở Bài 25 (Dùng Babel để biên dịch code Javascript thành các version cũ) (Đọc doc)
 * Vấn đề : Nếu dùng các trình duyệt cũ thì những cái như Arrow Function là cái mới sẽ bị báo lỗi 
@@ -357,3 +357,52 @@ output: {
   => Ở console : + http://localhost:3000/src/images/pexels-maxime-francis.jpg
                  + http://localhost:3000/src/pdfs/bitcoin.pdf
      
+
+Bài học rút ra ở Bài 27 (Phân tích file build với Webpack Bundle Analyzer)
+* Phân tích đầu ra output của chúng ta , kiểm tra file nào lớn và bị lỗi
+Các bước thực hiện:
+B1 : Cài : npm install --save-dev webpack-bundle-analyzer
+B2 : Bổ sung ở file webpack.config.js :
+     + const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+     + Bỏ cái này vào plugins : new BundleAnalyzerPlugin()
+     plugins: [
+            new MiniCssExtractPlugin({
+                filename: '[name].[contenthash].css' // file app.123....css và app.123....js được sinh ra để thể hiện 1 chức năng mới
+            }),
+            new HtmlWebpackPlugin({
+                title: 'Webpack App', // tên tiêu đề phải đc đặt trong template
+                filename: 'index.html', //tên file được sinh ra
+                template: 'src/template.html' //file mẫu được gắn vào khi index.html được sinh ra
+            }),
+            new BundleAnalyzerPlugin() // bổ sung ở bài 27
+        ],
+B3 : Chạy npm run start hoặc npm run build (nếu hiện ra 1 trang web khác là thành công)
+
+* Vấn đề xảy ra : Mỗi lần ta bấm npm run start nó đều hiển thị lên trang web ta vừa tạo
+Các bước giải quyết:
+B1 : Xây dụng:
+const basePlugins = [
+        new MiniCssExtractPlugin({
+            filename: '[name].[contenthash].css' // file app.123....css và app.123....js được sinh ra để thể hiện 1 chức năng mới
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Webpack App', // tên tiêu đề phải đc đặt trong template
+            filename: 'index.html', //tên file được sinh ra
+            template: 'src/template.html' //file mẫu được gắn vào khi index.html được sinh ra
+        }),
+    ]
+B2 : const plugins = isDevelopment ? basePlugins : [...basePlugins, new BundleAnalyzerPlugin()]
+(Cả 2 cái đều cùng cấp với const isDevelopment = Boolean(env.development);//true trong webpack.config.js)
+B3 : plugins cũ ta sửa ở trên chỉ còn lại : 
+module: {...},
+plugins,
+devServer:{...}
+B4 : Chạy npm run start mà chỉ hiện lên trang Web thường là thành công còn npm run build chỉ hiện trang chi tiết kia là đúng
+
+
+*Bonus : Ở file package.json ta để là : "start": "webpack serve --env development"
+=> Tức là khi ta bấm npm run start thì nó sẽ sử dụng development environment (nếu ta npm run build thì nó sẽ sử dụng production environment và làm hiển thị trang web chi tiết dung lượng mới hiện)
+
+production environment : là môi trường chứa những file đc sinh ra sau khi ta bấm npm run build (Chính là những chỗ ta code)
+development environment : là môi trường được sinh ra sau khi ta nhập npm run build và hiện lên trên màn hình máy tính (Để có thể xử lý bugs ngay trên màn hình)
+
