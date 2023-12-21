@@ -1,13 +1,27 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // console.log('__dirname : ', __dirname); --> __dirname :  E:\document\webpack
 // console.log('path.resolve() : ', path.resolve()); --> path.resolve() :  E:\document\webpack
 // console.log(`path.resolve(__dirname, 'dist') : `, path.resolve(__dirname, 'dist')); --> path.resolve(__dirname, 'dist') :  E:\document\webpack\dist
 
 module.exports = (env) => {
-    const isDevelopment = Boolean(env.development);//true
+    const isDevelopment = Boolean(env.development);//true (npm run start : true ; npm run build : false)
+
+    const basePlugins = [
+        new MiniCssExtractPlugin({
+            filename: '[name].[contenthash].css' // file app.123....css và app.123....js được sinh ra để thể hiện 1 chức năng mới
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Webpack App', // tên tiêu đề phải đc đặt trong template
+            filename: 'index.html', //tên file được sinh ra
+            template: 'src/template.html' //file mẫu được gắn vào khi index.html được sinh ra
+        }),
+    ]
+
+    const plugins = isDevelopment ? basePlugins : [...basePlugins, new BundleAnalyzerPlugin()]
     return {
         mode: isDevelopment ? 'development' : 'production',
         entry: {
@@ -52,16 +66,7 @@ module.exports = (env) => {
                 }
             ]
         },
-        plugins: [
-            new MiniCssExtractPlugin({
-                filename: '[name].[contenthash].css' // file app.123....css và app.123....js được sinh ra để thể hiện 1 chức năng mới
-            }),
-            new HtmlWebpackPlugin({
-                title: 'Webpack App', // tên tiêu đề phải đc đặt trong template
-                filename: 'index.html', //tên file được sinh ra
-                template: 'src/template.html' //file mẫu được gắn vào khi index.html được sinh ra
-            })
-        ],
+        plugins,
         devServer: {
             static: {
                 directory: 'dist' // Đường dẫn tương đối đến với thư mục chứa index.html

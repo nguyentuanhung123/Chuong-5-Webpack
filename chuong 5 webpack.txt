@@ -122,7 +122,7 @@ module.exports = {
 }
     B4 : Tạo thư mục chứa các file css và scss
     B5 : Đặt đường dẫn những file đó trong file tổng script.js
-    B6 : Chạy npm run build để chạy và đồng thời tạo mới file app.js
+    B6 : Chạy npm run build để chạy và đồng thời nó sẽ tự động tạo mới file app.js
 
 
 Bài học rút ra ở Bài 19(HTML webpack plugin)
@@ -130,6 +130,7 @@ Bây giờ có 1 vấn đề là chúng ta đang chỉnh sửa các đường d�
 html-webpack-plugin sẽ giúp chúng ta tự tạo ra 1 file html bằng webpack theo cấu hình của chúng ta.
 Chạy câu lệnh yarn add html-webpack-plugin -D để cài
 
+Các bước thực hiện
 * Câu lệnh npm run build lúc trước chỉ giúp tạo thư mục dist và file app.js bên trong nó chứ ko tự tạo ra file index.html
 * Cài câu lệnh : npm i --save-dev html-webpack-plugin
 * Xoá thư mục dist
@@ -143,7 +144,7 @@ plugins: [
         })
     ]
 
--> Project sẽ tự động sinh ra file dist chứa app.js và index.html có title là 'Webpack App' (lúc đầu chưa có dữ liệu nên khi chạy Live Server có màu trắng nhưng do quá nhanh nên ta không thể nhìn thấy)
+-> Project sẽ tự động sinh ra thư mục dist chứa file app.js và index.html có title là 'Webpack App' (lúc đầu chưa có dữ liệu nên khi chạy Live Server có màu trắng nhưng do quá nhanh nên ta không thể nhìn thấy)
 
 * Ta muốn file index.html render dựa trên 1 file được đặt sẵn 
   B1 : Tạo 1 file mẫu là template.html trong thư mục src
@@ -213,17 +214,16 @@ Bài học rút ra ở Bài 22 (Tạo một server bằng webpack để dev)
   },
  
   B3: Bổ sung ở file webpack.config.js dưới plugin:
-"devDependencies": {
-    "css-loader": "^6.8.1",
-    "html-webpack-plugin": "^5.5.4",
-    "mini-css-extract-plugin": "^2.7.6",
-    "prettier": "^3.1.1",
-    "sass": "^1.69.5",
-    "sass-loader": "^13.3.2",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
-  }
+        devServer: {
+            static: {
+                directory: 'dist' // Đường dẫn tương đối đến với thư mục chứa index.html
+            },
+            port: 3000, // Port thay cho port mặc định
+            open: true, // Mở trang webpack khi chạy terminal
+            hot: true, // Bật tính năng reload nhanh Hot Module Replacement
+            compress: true, // Bật Gzip cho các tài nguyên
+            historyApiFallback: true // Set true nếu bạn dùng cho các SPA và sử dụng History API của HTML5
+        }
 
   B4 : Chạy npm run start để khởi động 
 
